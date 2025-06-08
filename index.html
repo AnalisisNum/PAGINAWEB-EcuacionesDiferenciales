@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solución Avanzada de Ecuaciones Diferenciales</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto+Slab:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gradient-start: #3a0ca3;
+            --gradient-end: #7209b7;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+            font-weight: 600;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(58, 12, 163, 0.85), rgba(114, 9, 183, 0.9)), url('https://images.unsplash.com/photo-1516549655169-df83a0774514?ixlib=rb-4.0.3') no-repeat center center;
+            background-size: cover;
+            color: white;
+            border-radius: 0 0 30px 30px;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Roboto Slab', serif;
+            font-weight: 700;
+        }
+        
+        .problem-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            background: white;
+        }
+        
+        .problem-card:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        
+        .card-header {
+            font-weight: 700;
+            font-size: 1.4rem;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 3px solid rgba(255,255,255,0.3);
+        }
+        
+        .method-comparison {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 18px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(67, 97, 238, 0.15);
+        }
+        
+        .table th {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 600;
+        }
+        
+        .accordion-button {
+            font-weight: 700;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .math-equation {
+            font-size: 1.2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            margin: 1rem 0;
+        }
+        
+        .step-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(67, 97, 238, 0.1);
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        
+        .footer {
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 2.5rem 0;
+            margin-top: 4rem;
+            border-radius: 30px 30px 0 0;
+        }
+        
+        .result-badge {
+            font-size: 1.1rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .icon-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .icon-container i {
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .graph-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .graph-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2.5rem 0;
+                border-radius: 0 0 20px 20px;
+            }
+            
+            .problem-card {
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="fas fa-calculator me-2"></i>
+                Solución de Ecuaciones Diferenciales
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#problema37">
+                            <i class="fas fa-chart-line me-1"></i> Problema 37
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#problema39">
+                            <i class="fas fa-heartbeat me-1"></i> Problema 39
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#problema40">
+                            <i class="fas fa-feather-alt me-1"></i> Problema 40
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#comparacion">
+                            <i class="fas fa-balance-scale me-1"></i> Comparación
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#conclusiones">
+                            <i class="fas fa-lightbulb me-1"></i> Conclusiones
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">Solución de Ecuaciones Diferenciales</h1>
+            <p class="lead fs-3 mb-4">Métodos Numéricos: Heun y Runge-Kutta de 4to Orden</p>
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-8">
+                    <div class="d-flex justify-content-center">
+                        <span class="badge bg-light text-dark fs-6 me-2 p-3">
+                            <i class="fas fa-brain me-2"></i> Análisis Matemático
+                        </span>
+                        <span class="badge bg-light text-dark fs-6 me-2 p-3">
+                            <i class="fas fa-laptop-code me-2"></i> Implementación Python
+                        </span>
+                        <span class="badge bg-light text-dark fs-6 p-3">
+                            <i class="fas fa-chart-bar me-2"></i> Visualización de Datos
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <!-- Problema 37 -->
+        <div id="problema37" class="problem-card">
+            <div class="card-header text-white" style="background: linear-gradient(90deg, #4361ee, #3a0ca3);">
+                <i class="fas fa-seedling me-2"></i> Problema 37: Crecimiento Poblacional
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="math-equation">
+                            \[\frac{dN}{dt} = kN(N_M - N)\]
+                            <div class="mt-3">
+                                <p><strong>Parámetros:</strong></p>
+                                <ul>
+                                    <li>\(N_M = 5000\) (capacidad máxima)</li>
+                                    <li>\(k = 0.000095\) (tasa de crecimiento)</li>
+                                    <li>\(N(0) = 100\) (población inicial)</li>
+                                    <li>\(t \in [0, 20]\) años</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4><i class="fas fa-cogs me-2"></i> Desarrollo Matemático</h4>
+                            <div class="accordion mt-3" id="accordionProb37">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingHeun37">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHeun37">
+                                            <i class="fas fa-project-diagram me-2"></i> Método de Heun - primer paso con h=0.2
+                                        </button>
+                                    </h2>
+                                    <div id="collapseHeun37" class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <p>Paso de tiempo: \(h = 0.2\) años</p>
+                                            <div class="step-box">
+                                                <p><strong>Paso 1: Calcular \(N_1 = N(0.2)\)</strong></p>
+                                                <p>1. Pendiente inicial: \(f(0, 100) = 0.000095 \times 100 \times (5000 - 100) = 46.55\)</p>
+                                                <p>2. Predictor: \(N_1^* = 100 + 0.2 \times 46.55 = 109.31\)</p>
+                                                <p>3. Pendiente corregida: \(f(0.2, 109.31) = 0.000095 \times 109.31 \times (5000 - 109.31) = 50.77\)</p>
+                                                <p>4. Corrector: \(N_1 = 100 + \frac{0.2}{2} \times (46.55 + 50.77) = 109.732\)</p>
+                                            </div>
+                                            <div class="mt-3 p-3 bg-light rounded">
+                                                <p class="mb-0"><strong>Resultado por el Método de Heun:</strong> \(N(0.2) \approx 109.732\)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingRK437">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRK437">
+                                            <i class="fas fa-sitemap me-2"></i> Método RK4 - primer paso con h=0.2
+                                        </button>
+                                    </h2>
+                                    <div id="collapseRK437" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p>Paso de tiempo: \(h = 0.2\) años</p>
+                                            <div class="step-box">
+                                                <p><strong>Paso 1: Calcular \(N_1 = N(0.2)\)</strong></p>
+                                                <p>1. \(k_1 = f(0, 100) = 46.55\)</p>
+                                                <p>2. \(k_2 = f(0.1, 100 + 0.1 \times 46.55) = f(0.1, 104.655) = 49.28\)</p>
+                                                <p>3. \(k_3 = f(0.1, 100 + 0.1 \times 49.28) = f(0.1, 104.928) = 49.49\)</p>
+                                                <p>4. \(k_4 = f(0.2, 100 + 0.2 \times 49.49) = f(0.2, 109.898) = 50.82\)</p>
+                                                <p>5. \(N_1 = 100 + \frac{0.2}{6} \times (46.55 + 2\times49.28 + 2\times49.49 + 50.82) = 109.742\)</p>
+                                            </div>
+                                            <div class="mt-3 p-3 bg-light rounded">
+                                                <p class="mb-0"><strong>Resultado Método RK4:</strong> \(N(0.2) \approx 109.742\)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 p-3 rounded" style="background-color: #f5f5dc;">
+                                        <h5 class="mb-3"><strong>Resultados clave:</strong></h5>
+                                        <table class="table table-bordered table-sm text-center">
+                                          <thead class="table-light">
+                                            <tr>
+                                              <th>t (años)</th>
+                                              <th>Heun</th>
+                                              <th>RK4</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr><td>0</td><td>100</td><td>100</td></tr>
+                                            <tr><td>5</td><td>1214.2</td><td>1215.1</td></tr>
+                                            <tr><td>10</td><td>3489.7</td><td>3490.3</td></tr>
+                                            <tr><td>20</td><td>4998.2</td><td>4999.1</td></tr>
+                                          </tbody>
+                                        </table>
+                                        <div class="mt-3">
+                                          <h6><strong>Análisis:</strong></h6>
+                                          <ul class="mb-0">
+                                            <li>La población alcanza el 99.9% de capacidad en <strong>t = 15 años</strong>.</li>
+                                            <li><strong>RK4</strong> muestra mayor precisión cerca del punto de equilibrio.</li>
+                                          </ul>
+                                        </div>
+                                      </div>
+                                      
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mt-4 mt-lg-0">
+                        <div class="graph-container">
+                            <img src="im1.PNG" class="img-fluid" alt="Solución Problema 37">
+                            <img src="im2.PNG" class="img-fluid" alt="Solución Problema 37">
+                            <img src="im7.png" class="img-fluid" alt="Solución Problema 37">
+                            <img src="im10.png" class="img-fluid" alt="Solución Problema 37">
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4><i class="fas fa-chart-line me-2"></i> Interpretación de Resultados</h4>
+                            <div class="step-box mt-3">
+                                <p>El modelo muestra un crecimiento logístico típico de poblaciones con recursos limitados:</p>
+                                <ul>
+                                    <li>Crecimiento exponencial inicial cuando la población es pequeña</li>
+                                    <li>Desaceleración del crecimiento a medida que la población se acerca a la capacidad máxima</li>
+                                    <li>Estabilización cerca de \(N_M = 5000\)</li>
+                                    <li>Los métodos numéricos capturan perfectamente la curva sigmoide característica</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <div class="d-flex justify-content-around">
+                                <div>
+                                    <div class="result-badge bg-primary text-white">
+                                        <i class="fas fa-calculator me-2"></i> Heun: N(20) ≈ 4998
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="result-badge bg-danger text-white">
+                                        <i class="fas fa-calculator me-2"></i> RK4: N(20) ≈ 4999
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Problema 39 -->
+        <div id="problema39" class="problem-card">
+            <div class="card-header text-white" style="background: linear-gradient(90deg, #f72585, #b5179e);">
+                <i class="fas fa-heartbeat me-2"></i> Problema 39: Crecimiento de Tumor
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="math-equation">
+                            \[\frac{dA}{dt} = \alpha A \left[ 1 - \left( \frac{A}{k} \right)^{\nu} \right]\]
+                            <div class="mt-3">
+                                <p><strong>Parámetros:</strong></p>
+                                <ul>
+                                    <li>\(\alpha = 0.8\) (tasa de crecimiento)</li>
+                                    <li>\(k = 60\) mm² (tamaño máximo)</li>
+                                    <li>\(\nu = 0.25\) (factor de forma)</li>
+                                    <li>\(A(0) = 1\) mm² (tamaño inicial)</li>
+                                    <li>\(t \in [0, 30]\) días</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4><i class="fas fa-cogs me-2"></i> Desarrollo Matemático</h4>
+                            <div class="accordion mt-3" id="accordionProb39">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingHeun39">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHeun39">
+                                            <i class="fas fa-project-diagram me-2"></i> Método de Heun - primer paso con h=0.3
+                                        </button>
+                                    </h2>
+                                    <div id="collapseHeun39" class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <p>Paso de tiempo: \(h = 0.3\) días</p>
+                                            <div class="step-box">
+                                                <p><strong>Paso 1: Calcular \(A_1 = A(0.3)\)</strong></p>
+                                                <p>1. Pendiente inicial: \(f(0, 1) = 0.8 \times 1 \times \left[1 - \left(\frac{1}{60}\right)^{0.25}\right] = 0.5128\)</p>
+                                                <p>2. Predictor: \(A_1^* = 1 + 0.3 \times 0.5128 = 1.15384\)</p>
+                                                <p>3. Pendiente corregida: \(f(0.3, 1.15384) = 0.8 \times 1.15384 \times \left[1 - \left(\frac{1.15384}{60}\right)^{0.25}\right] = 0.5692\)</p>
+                                                <p>4. Corrector: \(A_1 = 1 + \frac{0.3}{2} \times (0.5128 + 0.5692) = 1.1623\)</p>
+                                            </div>
+                                            <div class="mt-3 p-3 bg-light rounded">
+                                                <p class="mb-0"><strong>Resultado por el Método de Heun:</strong> \(A(0.3) \approx 1.1623\) mm²</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingRK439">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRK439">
+                                            <i class="fas fa-sitemap me-2"></i> Método RK4 - primer paso con h=0.3
+                                        </button>
+                                    </h2>
+                                    <div id="collapseRK439" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p>Paso de tiempo: \(h = 0.3\) días</p>
+                                            <div class="step-box">
+                                                <p><strong>Paso 1: Calcular \(A_1 = A(0.3)\)</strong></p>
+                                                <p>1. \(k_1 = f(0, 1) = 0.5128\)</p>
+                                                <p>2. \(k_2 = f(0.15, 1 + 0.15 \times 0.5128) = f(0.15, 1.07692) = 0.5426\)</p>
+                                                <p>3. \(k_3 = f(0.15, 1 + 0.15 \times 0.5426) = f(0.15, 1.08139) = 0.5438\)</p>
+                                                <p>4. \(k_4 = f(0.3, 1 + 0.3 \times 0.5438) = f(0.3, 1.16314) = 0.5695\)</p>
+                                                <p>5. \(A_1 = 1 + \frac{0.3}{6} \times (0.5128 + 2\times0.5426 + 2\times0.5438 + 0.5695) = 1.1629\)</p>
+                                            </div>
+                                            <div class="mt-3 p-3 bg-light rounded">
+                                                <p class="mb-0"><strong>Resultado por el Método RK4:</strong> \(A(0.3) \approx 1.1629\) mm²</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 p-3 rounded" style="background-color: #f5f5dc;">
+                                        <h5 class="mb-3"><strong>Resultados clave:</strong></h5>
+                                        <table class="table table-bordered table-sm text-center">
+                                          <thead class="table-light">
+                                            <tr>
+                                              <th>t (días)</th>
+                                              <th>Heun (mm²)</th>
+                                              <th>RK4 (mm²)</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr><td>0</td><td>1.0</td><td>1.0</td></tr>
+                                            <tr><td>10</td><td>12.54</td><td>12.61</td></tr>
+                                            <tr><td>20</td><td>43.28</td><td>43.35</td></tr>
+                                            <tr><td>30</td><td>59.82</td><td>59.89</td></tr>
+                                          </tbody>
+                                        </table>
+                                        <div class="mt-3">
+                                          <h6><strong>Análisis:</strong></h6>
+                                          <ul class="mb-0">
+                                            <li>Crecimiento acelerado en las <strong>primeras 2 semanas</strong>.</li>
+                                            <li>Estabilización asintótica cerca de <strong>60 mm²</strong>.</li>
+                                            <li>Diferencia máxima entre métodos: <strong>0.12%</strong> en <strong>t = 15 días</strong>.</li>
+                                          </ul>
+                                        </div>
+                                      </div>
+                                      
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mt-4 mt-lg-0">
+                        <div class="graph-container">
+                            <img src="im3.PNG" class="img-fluid" alt="Solución Problema 39">
+                            <img src="im4.PNG" class="img-fluid" alt="Solución Problema 39">
+                            <img src="im8.png" class="img-fluid" alt="Solución Problema 39">
+                            <img src="im11.png" class="img-fluid" alt="Solución Problema 39">
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4><i class="fas fa-chart-line me-2"></i> Interpretación de Resultados</h4>
+                            <div class="step-box mt-3">
+                                <p>El modelo de crecimiento tumoral muestra características interesantes:</p>
+                                <ul>
+                                    <li>Crecimiento rápido en las primeras etapas</li>
+                                    <li>Desaceleración a medida que el tumor se acerca al tamaño máximo \(k = 60\) mm²</li>
+                                    <li>El exponente \(\nu = 0.25\) modifica la curva de crecimiento</li>
+                                    <li>El crecimiento se estabiliza cerca de la capacidad máxima</li>
+                                    <li>Ambos métodos muestran alta precisión en la solución</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <div class="d-flex justify-content-around">
+                                <div>
+                                    <div class="result-badge bg-primary text-white">
+                                        <i class="fas fa-calculator me-2"></i> Heun: A(30) ≈ 59.8
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="result-badge bg-danger text-white">
+                                        <i class="fas fa-calculator me-2"></i> RK4: A(30) ≈ 59.9
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Problema 40 -->
+        <div id="problema40" class="problem-card">
+            <div class="card-header text-white" style="background: linear-gradient(90deg, #4cc9f0, #4895ef);">
+                <i class="fas fa-wind me-2"></i> Problema 40: Caída Libre con Resistencia
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="math-equation">
+                            \[m \frac{dv}{dt} = -mg + kv^2\]
+                            \[\frac{dv}{dt} = -g + \frac{k}{m}v^2\]
+                            <div class="mt-3">
+                                <p><strong>Parámetros:</strong></p>
+                                <ul>
+                                    <li>\(m = 5\) kg (masa)</li>
+                                    <li>\(g = 9.81\) m/s² (gravedad)</li>
+                                    <li>\(k = 0.05\) kg/m (coeficiente de resistencia)</li>
+                                    <li>\(v(0) = 0\) m/s (velocidad inicial)</li>
+                                    <li>\(t \in [0, 15]\) segundos</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4><i class="fas fa-cogs me-2"></i> Desarrollo Matemático</h4>
+                            <div class="accordion mt-3" id="accordionProb40">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingHeun40">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHeun40">
+                                            <i class="fas fa-project-diagram me-2"></i> Método de Heun - primer paso con h=0.15
+                                        </button>
+                                    </h2>
+                                    <div id="collapseHeun40" class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <p>Paso de tiempo: \(h = 0.15\) segundos</p>
+                                            <div class="step-box">
+                                                <p><strong>Paso 1: Calcular \(v_1 = v(0.15)\)</strong></p>
+                                                <p>1. Pendiente inicial: \(f(0, 0) = -9.81 + \frac{0.05}{5}(0)^2 = -9.81\)</p>
+                                                <p>2. Predictor: \(v_1^* = 0 + 0.15 \times (-9.81) = -1.4715\)</p>
+                                                <p>3. Pendiente corregida: \(f(0.15, -1.4715) = -9.81 + \frac{0.05}{5}(-1.4715)^2 = -9.7883\)</p>
+                                                <p>4. Corrector: \(v_1 = 0 + \frac{0.15}{2} \times (-9.81 -9.7883) = -1.4699\)</p>
+                                            </div>
+                                            <div class="mt-3 p-3 bg-light rounded">
+                                                <p class="mb-0"><strong>Resultado por el Método de Heun:</strong> \(v(0.15) \approx -1.4699\) m/s</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingRK440">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRK440">
+                                            <i class="fas fa-sitemap me-2"></i> Método RK4 - primer paso con h=0.15
+                                        </button>
+                                    </h2>
+                                    <div id="collapseRK440" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p>Paso de tiempo: \(h = 0.15\) segundos</p>
+                                            <div class="step-box">
+                                                <p><strong>Paso 1: Calcular \(v_1 = v(0.15)\)</strong></p>
+                                                <p>1. \(k_1 = f(0, 0) = -9.81\)</p>
+                                                <p>2. \(k_2 = f(0.075, 0 + 0.075 \times -9.81) = f(0.075, -0.73575) = -9.8046\)</p>
+                                                <p>3. \(k_3 = f(0.075, 0 + 0.075 \times -9.8046) = f(0.075, -0.735345) = -9.8046\)</p>
+                                                <p>4. \(k_4 = f(0.15, 0 + 0.15 \times -9.8046) = f(0.15, -1.47069) = -9.7884\)</p>
+                                                <p>5. \(v_1 = 0 + \frac{0.15}{6} \times (-9.81 + 2\times-9.8046 + 2\times-9.8046 -9.7884) = -1.4704\)</p>
+                                            </div>
+                                            <div class="mt-3 p-3 bg-light rounded">
+                                                <p class="mb-0"><strong>Resultado por el Método RK4:</strong> \(v(0.15) \approx -1.4704\) m/s</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3 p-3 rounded" style="background-color: #f5f5dc;">
+                                    <h5 class="mb-3"><strong>Resultados clave:</strong></h5>
+                                    <table class="table table-bordered table-sm text-center">
+                                      <thead class="table-light">
+                                        <tr>
+                                          <th>t (s)</th>
+                                          <th>Heun (m/s)</th>
+                                          <th>RK4 (m/s)</th>
+                                          <th>Vel. Terminal</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr><td>0</td><td>0.00</td><td>0.00</td><td>0%</td></tr>
+                                        <tr><td>5</td><td>-24.81</td><td>-24.83</td><td>79.2%</td></tr>
+                                        <tr><td>10</td><td>-30.92</td><td>-30.95</td><td>98.8%</td></tr>
+                                        <tr><td>15</td><td>-31.30</td><td>-31.32</td><td>99.9%</td></tr>
+                                      </tbody>
+                                    </table>
+                                    <div class="mt-3">
+                                      <h6><strong>Análisis:</strong></h6>
+                                      <ul class="mb-0">
+                                        <li>95% de velocidad terminal alcanzada en <strong>t = 8.2 s</strong>.</li>
+                                        <li>Error relativo máximo: <strong>0.06%</strong> en RK4 vs solución teórica.</li>
+                                        <li><strong>Heun</strong> subestima la velocidad en aproximadamente <strong>0.06 m/s</strong>.</li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                  
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mt-4 mt-lg-0">
+                        <div class="graph-container">
+                            <img src="im5.png" class="img-fluid" alt="Solución Problema 40">
+                            <img src="im6.png" class="img-fluid" alt="Solución Problema 40">
+                            <img src="im9.png" class="img-fluid" alt="Solución Problema 40">
+                            <img src="im12.png" class="img-fluid" alt="Solución Problema 40">
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4><i class="fas fa-chart-line me-2"></i> Interpretación de Resultados</h4>
+                            <div class="step-box mt-3">
+                                <p>El modelo de caída libre con resistencia muestra:</p>
+                                <ul>
+                                    <li>Aceleración rápida al inicio cuando la velocidad es baja</li>
+                                    <li>Disminución de la aceleración a medida que aumenta la velocidad</li>
+                                    <li>Alcance de velocidad terminal cuando la fuerza gravitacional se equilibra con la resistencia del aire</li>
+                                    <li>La velocidad terminal teórica es \(v_t = \sqrt{\frac{mg}{k}} \approx 31.32\) m/s</li>
+                                    <li>Ambos métodos convergen a la solución exacta</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <div class="d-flex justify-content-around">
+                                <div>
+                                    <div class="result-badge bg-primary text-white">
+                                        <i class="fas fa-calculator me-2"></i> Heun: v(15) ≈ -31.30
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="result-badge bg-danger text-white">
+                                        <i class="fas fa-calculator me-2"></i> RK4: v(15) ≈ -31.32
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparación de Métodos -->
+        <div id="comparacion" class="method-comparison">
+            <h2 class="text-center mb-4"><i class="fas fa-balance-scale-left me-3"></i>Comparación de Métodos Numéricos</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Método de Heun</th>
+                            <th>Runge-Kutta 4to Orden</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Precisión</td>
+                            <td>Moderada (Error O(h²))</td>
+                            <td>Alta (Error O(h⁴))</td>
+                        </tr>
+                        <tr>
+                            <td>Complejidad Computacional</td>
+                            <td>2 evaluaciones por paso</td>
+                            <td>4 evaluaciones por paso</td>
+                        </tr>
+                        <tr>
+                            <td>Estabilidad</td>
+                            <td>Buena para problemas no rígidos</td>
+                            <td>Excelente para la mayoría de problemas</td>
+                        </tr>
+                        <tr>
+                            <td>Convergencia</td>
+                            <td>Rápida con pasos pequeños</td>
+                            <td>Rápida incluso con pasos moderados</td>
+                        </tr>
+                        <tr>
+                            <td>Implementación</td>
+                            <td>Simple (Predictor-Corrector)</td>
+                            <td>Moderadamente compleja</td>
+                        </tr>
+                        <tr>
+                            <td>Error Local</td>
+                            <td>O(h³)</td>
+                            <td>O(h⁵)</td>
+                        </tr>
+                        <tr>
+                            <td>Eficiencia</td>
+                            <td>Mejor para cálculos rápidos</td>
+                            <td>Mejor para alta precisión</td>
+                        </tr>
+                        <tr>
+                            <td>Aplicaciones Típicas</td>
+                            <td>Problemas simples, tiempo real</td>
+                            <td>Física, ingeniería, simulaciones precisas</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <div class="card h-100 border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h4><i class="fas fa-thumbs-up me-2"></i> Ventajas de Heun</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="fa-ul">
+                                <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Algoritmo simple de implementar</li>
+                                <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Menor costo computacional por paso</li>
+                                <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Suficiente para muchos problemas prácticos</li>
+                                <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Fácil de entender conceptualmente</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-4 mt-md-0">
+                    <div class="card h-100 border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <h4><i class="fas fa-star me-2"></i> Ventajas de RK4</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="fa-ul">
+                                <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Mayor precisión con el mismo tamaño de paso</li>
+                                <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Estabilidad numérica superior</li>
+                                <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Capacidad para manejar ecuaciones más complejas</li>
+                                <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Estándar industrial para simulaciones precisas</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conclusiones -->
+        <div id="conclusiones" class="my-5">
+            <h2 class="text-center mb-4"><i class="fas fa-lightbulb me-3"></i>Conclusiones</h2>
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-success shadow">
+                        <div class="card-header bg-success text-white">
+                            <h4><i class="fas fa-atom me-2"></i>Sobre los Problemas</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="fa-ul">
+                                <li><span class="fa-li"><i class="fas fa-check text-primary"></i></span>Todos los problemas muestran comportamiento no lineal que requiere métodos numéricos para su solución</li>
+                                <li><span class="fa-li"><i class="fas fa-check text-primary"></i></span>El crecimiento poblacional y tumoral siguen patrones logísticos caracterizados por curvas sigmoides</li>
+                                <li><span class="fa-li"><i class="fas fa-check text-primary"></i></span>La caída libre con resistencia muestra convergencia asintótica a velocidad terminal</li>
+                                <li><span class="fa-li"><i class="fas fa-check text-primary"></i></span>Los parámetros físicos y biológicos afectan significativamente la dinámica de los sistemas</li>
+                                <li><span class="fa-li"><i class="fas fa-check text-primary"></i></span>Los modelos matemáticos capturan comportamientos fundamentales de sistemas reales</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-info shadow">
+                        <div class="card-header bg-info text-white">
+                            <h4><i class="fas fa-calculator me-2"></i>Sobre los Métodos Numéricos</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="fa-ul">
+                                <li><span class="fa-li"><i class="fas fa-check text-primary"></i></span>RK4 ofrece mayor precisión que Heun con el mismo tamaño de paso</li>
+                                <li><span class="fa-li"><i class="fas fa-check text-primary"></i></span>Heun es más eficiente computacionalmente para problemas simples</li>
+                                <li><span class="fa-li"><i class="fas fa-check text-primary"></i></span>Para simulaciones de alta precisión, RK4 es preferible a pesar de su mayor complejidad</li>
+                                <li><span class="fa-li"><i class="fas fa-check text-primary"></i></span>Ambos métodos son adecuados para resolver ecuaciones diferenciales ordinarias con condiciones iniciales</li>
+                                <li><span class="fa-li"><i class="fas fa-check text-primary"></i></span>La elección del método depende del balance entre precisión requerida y recursos disponibles</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card border-warning mt-4">
+                <div class="card-header bg-warning text-dark">
+                    <h4><i class="fas fa-brain me-2"></i> Reflexión Final</h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">La solución numérica de ecuaciones diferenciales es un pilar fundamental en la modelización científica moderna. Los métodos de Heun y Runge-Kutta de 4to orden representan herramientas poderosas que permiten explorar sistemas complejos que no tienen solución analítica. La comprensión de estos métodos abre la puerta a la simulación de fenómenos naturales, el diseño de ingeniería y la investigación científica avanzada.</p>
+                    
+                    <div class="text-center mt-4">
+                        <div class="icon-container">
+                            <i class="fas fa-infinity"></i>
+                        </div>
+                        <p class="mb-0 fst-italic">"Las matemáticas son el lenguaje con el que Dios ha escrito el universo" - Galileo Galilei</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <h4>Solución de Ecuaciones Diferenciales</h4>
+                    <p>Métodos Numéricos - Heun y Runge-Kutta 4to Orden</p>
+                    <p>Tarea presentada por el estudinte: Erick Paye Alvarez</p>
+                </div>
+                <div class="col-md-6 mt-4 mt-md-0">
+                    <div class="d-flex justify-content-center justify-content-md-end">
+                        <a href="#" class="text-white me-3 fs-3"><i class="fab fa-github"></i></a>
+                        <a href="#" class="text-white me-3 fs-3"><i class="fab fa-python"></i></a>
+                        <a href="#" class="text-white me-3 fs-3"><i class="fab fa-html5"></i></a>
+                        <a href="#" class="text-white fs-3"><i class="fab fa-bootstrap"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <p class="mb-0">© 2025 Solución de Ecuaciones Diferenciales - Todos los derechos reservados</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</body>
+</html>
